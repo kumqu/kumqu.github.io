@@ -1,6 +1,6 @@
 # Site settings
-title:          Tale
-description:    "Minimal Jekyll theme for storytellers"
+title:          Kumqu's Blog
+description:    "Record My Learning Process"
 url:            "https://kumqu.github.io"
 
 # Google Analytics
@@ -8,9 +8,9 @@ google_analytics: UA—XXXXXXXX-X
 
 # Author
 author:
-  name:         Chester How
-  url:          https://chester.how
-  email:        chesterhow@gmail.com
+  name:         KUMQU
+  url:          https://kumqu.github.io
+  email:        kumquatu@gmail.com
 
 # Build settings
 markdown:       kramdown
