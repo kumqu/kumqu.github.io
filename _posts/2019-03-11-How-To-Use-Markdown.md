@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "how to use Markdown"
+title: "How To Use Markdown"
 author: "kuqmu"
 ---
 
