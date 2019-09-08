@@ -176,7 +176,7 @@ BOOL hook_iat(LPCSTR szDllName, PROC pfnOrg, PROC pfnNew)
 
 <img src="{{https://github.com/kumqu/kumqu.github.io/blob/master}}/assets/2019-08-13\8.PNG" alt="8" style="zoom:60%;" />
 
-​	9. 继续调试, 到达如下代码部分, 其含义是在IAT中查找`SetWindowTextW API`的位置. `73AC10E0`地址处的指令, `ESI`的值为`user32.dll`的IAT起始地址`010010B4`, `EBP`的值为`SetWindowTextW`的地址`7562612B`.这部分代码运行循环进入IAT, 查找位于`01001110`的``SetWindowsTextW`的地址值`7562612B`:
+​	9. 继续调试, 到达如下代码部分, 其含义是在IAT中查找`SetWindowTextW API`的位置. `73AC10E0`地址处的指令, `ESI`的值为`user32.dll`的IAT起始地址`010010B4`, `EBP`的值为`SetWindowTextW`的地址`7562612B`.这部分代码运行循环进入IAT, 查找位于`01001110`的`SetWindowsTextW`的地址值`7562612B`:
 
 <img src="{{https://github.com/kumqu/kumqu.github.io/blob/master}}/assets/2019-08-13\9.PNG" alt="9" style="zoom:60%;" />
 
