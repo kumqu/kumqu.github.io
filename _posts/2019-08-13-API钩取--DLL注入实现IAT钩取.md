@@ -20,7 +20,7 @@ author: "kumqu"
 
 ​	实现这个目标的主要程序是 `hookiat.dll`, 其各部分源代码如下:
 
-1. `DLLMain()`:
+​	1. `DLLMain()`:
 
 ```c
 BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved)
@@ -46,7 +46,7 @@ BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved)
 }
 ```
 
-2. `MySetWindowsTextW()`:
+​	2. `MySetWindowsTextW()`:
 
 ```c
 BOOL WINAPI MySetWindowTextW(HWND hWnd, LPWSTR lpString)
@@ -73,7 +73,7 @@ BOOL WINAPI MySetWindowTextW(HWND hWnd, LPWSTR lpString)
 }
 ```
 
-3. `hook_iat()`
+​	3. `hook_iat()`
 
 ```c
 BOOL hook_iat(LPCSTR szDllName, PROC pfnOrg, PROC pfnNew)
@@ -144,47 +144,47 @@ BOOL hook_iat(LPCSTR szDllName, PROC pfnOrg, PROC pfnNew)
 
 > 实验环境为 Windows 7 (32位) 系统环境.
 
-1. 首先, 运行计算器, 用`Process Explorer`查看计算器进程的PID为`1604`, 如图所示:
+​	1. 首先, 运行计算器, 用`Process Explorer`查看计算器进程的PID为`1604`, 如图所示:
 
 <img src="{{https://github.com/kumqu/kumqu.github.io/blob/master}}/assets/2019-08-13\1.PNG" alt="1" style="zoom:67%;" />
 
-2. 将`calc.exe`附加到`OllyDbg`, 附加成功后F9运行`calc.exe`进程, 然后设置`OllyDbg`选项`中断于新模块(DLL)`. 如下图所示. 这样, 注入DLL文件时, 控制权就会转给调试器.
+​	2. 将`calc.exe`附加到`OllyDbg`, 附加成功后F9运行`calc.exe`进程, 然后设置`OllyDbg`选项`中断于新模块(DLL)`. 如下图所示. 这样, 注入DLL文件时, 控制权就会转给调试器.
 
 <img src="{{https://github.com/kumqu/kumqu.github.io/blob/master}}/assets/2019-08-13\2.PNG" alt="2" style="zoom:60%;" />
 
-3. 在命令行窗口中输入相应参数, 运行`InjectDll.exe`, 将`hookiat.dll`注入计算器进程, 如下图所示:
+​	3. 在命令行窗口中输入相应参数, 运行`InjectDll.exe`, 将`hookiat.dll`注入计算器进程, 如下图所示:
 
 <img src="{{https://github.com/kumqu/kumqu.github.io/blob/master}}/assets/2019-08-13\3.PNG" alt="3" style="zoom: 67%;" />
 
-4. 由于`calc.exe`进程发生DLL加载事件, `Ollydbg`会在可执行模块窗口的`hookiat.dll`处中断, 如下图所示:
+​	4. 由于`calc.exe`进程发生DLL加载事件, `Ollydbg`会在可执行模块窗口的`hookiat.dll`处中断, 如下图所示:
 
 <img src="{{https://github.com/kumqu/kumqu.github.io/blob/master}}/assets/2019-08-13\4.PNG" alt="4" style="zoom:60%;" />
 
-5. 取消之前复选的`中断于新模块(DLL)`选项, 查找`DLLMain()`代码. 因为`DLLMain()`函数中使用了`SetWindowTextW`字符串, 所以在`Ollydbg`的代码窗口中右键选择`查找->所有参考文本字串`, 如下图所示:
+​	5. 取消之前复选的`中断于新模块(DLL)`选项, 查找`DLLMain()`代码. 因为`DLLMain()`函数中使用了`SetWindowTextW`字符串, 所以在`Ollydbg`的代码窗口中右键选择`查找->所有参考文本字串`, 如下图所示:
 
 <img src="{{https://github.com/kumqu/kumqu.github.io/blob/master}}/assets/2019-08-13\5.PNG" alt="5" style="zoom:60%;" />
 
-6. 进入`SetWindowTextW`字符串的代码地址`73AC113E`处, 经过分析, 可以得知这一部分`73AC1130~  `即为`DLLMain()`函数, 如下图所示:
+​	6. 进入`SetWindowTextW`字符串的代码地址`73AC113E`处, 经过分析, 可以得知这一部分`73AC1130~  `即为`DLLMain()`函数, 如下图所示:
 
 <img src="{{https://github.com/kumqu/kumqu.github.io/blob/master}}/assets/2019-08-13\6.PNG" alt="6" style="zoom:60%;" />
 
-7. 调试`DLLMain()`函数, 运行到地址`72EA1160`处, 比较代码与参数输入, 可以得知这里是调用了`hook_iat()`函数, 如下图所示:
+​	7. 调试`DLLMain()`函数, 运行到地址`72EA1160`处, 比较代码与参数输入, 可以得知这里是调用了`hook_iat()`函数, 如下图所示:
 
 <img src="{{https://github.com/kumqu/kumqu.github.io/blob/master}}/assets/2019-08-13\7.PNG" alt="7" style="zoom:60%;" />
 
-8. F7进入`hook_iat()`函数, 运行到如下部分, 其含义是从PE文件头查找`IMAGE_IMPORT_DESCRIPTION (IID Table)`的过程:
+​	8. F7进入`hook_iat()`函数, 运行到如下部分, 其含义是从PE文件头查找`IMAGE_IMPORT_DESCRIPTION (IID Table)`的过程:
 
 <img src="{{https://github.com/kumqu/kumqu.github.io/blob/master}}/assets/2019-08-13\8.PNG" alt="8" style="zoom:60%;" />
 
-9. 继续调试, 到达如下代码部分, 其含义是在IAT中查找`SetWindowTextW API`的位置. `73AC10E0`地址处的指令, `ESI`的值为`user32.dll`的IAT起始地址`010010B4`, `EBP`的值为`SetWindowTextW`的地址`7562612B`.这部分代码运行循环进入IAT, 查找位于`01001110`的``SetWindowsTextW`的地址值`7562612B`:
+​	9. 继续调试, 到达如下代码部分, 其含义是在IAT中查找`SetWindowTextW API`的位置. `73AC10E0`地址处的指令, `ESI`的值为`user32.dll`的IAT起始地址`010010B4`, `EBP`的值为`SetWindowTextW`的地址`7562612B`.这部分代码运行循环进入IAT, 查找位于`01001110`的``SetWindowsTextW`的地址值`7562612B`:
 
 <img src="{{https://github.com/kumqu/kumqu.github.io/blob/master}}/assets/2019-08-13\9.PNG" alt="9" style="zoom:60%;" />
 
-10. 继续调试, `73AC1117`地址处的指令将`MySetWindowTextW (hook函数)`的地址`73AC1117`覆写到前面从IAT中获取的`SetWindowTextW`地址`01001110`, 即实现了IAT中`SetWindowTextW API`的钩取:
+​	10. 继续调试, `73AC1117`地址处的指令将`MySetWindowTextW (hook函数)`的地址`73AC1117`覆写到前面从IAT中获取的`SetWindowTextW`地址`01001110`, 即实现了IAT中`SetWindowTextW API`的钩取:
 
 <img src="{{https://github.com/kumqu/kumqu.github.io/blob/master}}/assets/2019-08-13\10.PNG" alt="10" style="zoom:60%;" />
 
-11. 完成上述IAT钩取后, 在`Ollydbg`中按F9正常运行运行`calc.exe`进程. 用户在计算器界面输入数字, `calc.exe`会调用IAT中保存的`hookiat.MySetWindowTextW()`地址. `MySetWindowsTextW()`函数会先将阿拉伯数字转换为中文数字, 再调用`user32.SetWindowTextW()`, 测试结果如下:
+​	11. 完成上述IAT钩取后, 在`Ollydbg`中按F9正常运行运行`calc.exe`进程. 用户在计算器界面输入数字, `calc.exe`会调用IAT中保存的`hookiat.MySetWindowTextW()`地址. `MySetWindowsTextW()`函数会先将阿拉伯数字转换为中文数字, 再调用`user32.SetWindowTextW()`, 测试结果如下:
 
 <img src="{{https://github.com/kumqu/kumqu.github.io/blob/master}}/assets/2019-08-13\11.PNG" alt="11" style="zoom:67%;" />
 
