@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Sodinokibi勒索病毒详细分析"
+title: "Sodinokibi勒索病毒分析"
 author: "kumqu"
 
 
